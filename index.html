@@ -1,18 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Message to Discord</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discord Messages</title>
+  <style>
+    #messages {
+      list-style-type: none;
+      padding: 0;
+    }
+    .message {
+      background-color: #f0f0f0;
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Send Message to Discord Webhook</h1>
-    <form id="messageForm">
-        <label for="message">Message:</label><br>
-        <input type="text" id="message" name="message" required><br><br>
-        <button type="submit">Send Message</button>
-    </form>
+  <h1>Messages from Discord Channel</h1>
+  <ul id="messages"></ul>
 
-    <script src="script.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    const channelId = '1353190628875571393';  // Replace with your channel ID
+    const botToken = 'MTIyOTU5MzE3NzM3NjE2MTc5Mg.GJ_u9X.4GdTkmuQMu_WKRgbGKnVsR3IzvjFwuj9c9gtSk';     // Replace with your bot's token
+
+    // Fetch messages from Discord API
+    function fetchMessages() {
+      fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bot ${botToken}`
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        const messagesContainer = document.getElementById('messages');
+        messagesContainer.innerHTML = '';
+
+        data.forEach(message => {
+          const li = document.createElement('li');
+          li.classList.add('message');
+          li.textContent = `${message.author.username}: ${message.content}`;
+          messagesContainer.appendChild(li);
+        });
+      })
+      .catch(err => console.error('Error fetching messages:', err));
+    }
+
+    // Load messages when the page is loaded
+    window.onload = fetchMessages;
+  </script>
 </body>
 </html>
